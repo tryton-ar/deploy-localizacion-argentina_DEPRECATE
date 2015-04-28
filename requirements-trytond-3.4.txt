@@ -40,3 +40,4 @@ wsgiref==0.1.2
 -e hg+https://bitbucket.org/trytonspain/trytond-company_logo#egg=trytond-company_logo
 -e hg+https://bitbucket.org/thymbra/account_ar#egg=account_ar
 -e git+https://github.com/tryton-ar/account_invoice_ar#egg=account_invoice_ar
+ConfigParser

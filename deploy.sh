@@ -105,6 +105,7 @@ echo "Instalamos modulos locales en el virtualen"
 echo "---------------------------------------------------------"
 
 cdsitepackages
+SITEPACKAGES=`pwd`
 cd trytond/modules
 MODULES_TRYTON=`pwd`
 
@@ -114,7 +115,7 @@ echo "---------------------------------------------------------"
 ln -v -s $MODULES_EXTRA/account-ar $MODULES_TRYTON/account_ar
 ln -v -s $MODULES_EXTRA/account-invoice-ar $MODULES_TRYTON/account_invoice_ar
 ln -v -s $MODULES_EXTRA/trytond-company-logo $MODULES_TRYTON/company_logo
-ln -v -s $MODULES_EXTRA/pyafipws-2.7 $MODULES_TRYTON/pyafipws
+ln -v -s $MODULES_EXTRA/pyafipws-2.7 $SITEPACKAGES/pyafipws
 
 echo "---------------------------------------------------------"
 echo "Ejecutamos scripts de instalacion de scenario base"
