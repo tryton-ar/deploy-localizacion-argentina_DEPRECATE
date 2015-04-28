@@ -115,6 +115,7 @@ echo "---------------------------------------------------------"
 ln -v -s $MODULES_EXTRA/account-ar $MODULES_TRYTON/account_ar
 ln -v -s $MODULES_EXTRA/account-invoice-ar $MODULES_TRYTON/account_invoice_ar
 ln -v -s $MODULES_EXTRA/trytond-company-logo $MODULES_TRYTON/company_logo
+ln -v -s $MODULES_EXTRA/account_coop_ar $MODULES_TRYTON/account_coop_ar
 ln -v -s $MODULES_EXTRA/pyafipws-2.7 $SITEPACKAGES/pyafipws
 
 echo "---------------------------------------------------------"

@@ -66,6 +66,7 @@ def install_modules():
     Module = Model.get('ir.module.module')
     modules_to_install=[
         'account_ar',
+        'account_coop_ar',
         'company_logo',
         'account_invoice_ar',
         ]
@@ -96,23 +97,23 @@ def crear_scenario_tipo(config, lang):
     print u'\n>>> creando company...'
 
     import ConfigParser
-    config = ConfigParser.ConfigParser()
-    config.read('company.ini')
+    ini_config = ConfigParser.ConfigParser()
+    ini_config.read('company.ini')
     currencies = Currency.find([('code', '=', 'ARS')])
     currency, = currencies
     company_config = Wizard('company.company.config')
     company_config.execute('company')
     company = company_config.form
-    party = Party(name=config['company']['name'])
+    party = Party(name=ini_config.get('company','name'))
     party.lang = lang
 
     party.vat_country = 'AR'
-    party.vat_number = str(config['company']['cuit'])
-    party.iva_condition = str(config['company']['iva_condition'])
-    party.addresses.street = str(config['company']['direccion'])
-    party.addresses.zip = str(config['company']['codigo_postal'])
+    party.vat_number = ini_config.get('company', 'cuit')
+    party.iva_condition = ini_config.get('company', 'iva_condition')
+    party.addresses.street = ini_config.get('company', 'direccion')
+    party.addresses.zip = ini_config.get('company', 'codigo_postal')
     party.addresses.country = '191'
-    party.addresses.city = str(config['company']['ciudad'])
+    party.addresses.city = ini_config.get('company', 'ciudad')
     party.save()
 
     company.party = party
@@ -221,11 +222,17 @@ def crear_scenario_tipo(config, lang):
     create_chart.form.account_payable = payable
     create_chart.execute('create_properties')
     cash, = Account.find([
-            ('kind', '=', 'other'),
-            ('name', '=', 'Caja pesos'),
-            ('code', '=', '11101'),
+            ('kind', '=', 'stock'),
+            ('name', '=', 'Caja'),
+            ('code', '=', '1111'),
             ('company', '=', company.id),
             ])
+    #cash, = Account.find([
+    #        ('kind', '=', 'other'),
+    #        ('name', '=', 'Caja pesos'),
+    #        ('code', '=', '11101'),
+    #        ('company', '=', company.id),
+    #        ])
     cash_journal, = Journal.find([('type', '=', 'cash')])
     cash_journal.credit_account = cash
     cash_journal.debit_account = cash
