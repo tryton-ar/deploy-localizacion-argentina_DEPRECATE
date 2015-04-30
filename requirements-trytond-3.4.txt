@@ -1,3 +1,4 @@
+ConfigParser
 Genshi==0.7
 M2Crypto==0.22.3
 Pillow==2.8.1
@@ -35,10 +36,11 @@ trytond-product==3.4.1
 trytond-purchase==3.4.1
 trytond-sale==3.4.1
 trytond-stock==3.4.1
+trytonar-account-invoice-ar==3.4.1
+trytonar-account-coop-ar==3.4.0
+trytonar-account-voucher-ar==3.4.0
+trytonar-account-check-ar==3.4.0
+trytonar-account-retencion-ar==3.4.0
+trytonar-account-bank-ar==3.4.0
 vatnumber==1.2
 wsgiref==0.1.2
--e hg+https://bitbucket.org/trytonspain/trytond-company_logo#egg=trytond-company_logo
--e hg+https://bitbucket.org/thymbra/account_ar#egg=account_ar
--e git+https://github.com/tryton-ar/account_invoice_ar#egg=account_invoice_ar
--e git+https://github.com/gcoop-libre/account_coop_ar#egg=account_coop_ar
-ConfigParser
