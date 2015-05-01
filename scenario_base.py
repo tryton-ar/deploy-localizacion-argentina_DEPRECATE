@@ -59,6 +59,7 @@ def main(options):
 
     install_modules()
     crear_scenario_tipo(config, es_AR)
+    crear_account_invoice_ar_pos(config, es_AR)
     print "done."
 
 def install_modules():
@@ -295,6 +296,45 @@ def crear_scenario_tipo(config, lang):
     account_config.save()
 
     print u'\n>>> scenario base done.'
+
+def crear_account_invoice_ar_pos(config, lang):
+    """ Crear Punto de Venta Electronico con Factura A, B y C """
+
+    print u'\n>>> Comienza creacion de POS Electronico para Facturas A, B y C'
+    Company = Model.get('company.company')
+    Pos = Model.get('account.pos')
+    PosSequence = Model.get('account.pos.sequence')
+
+    company, = Company.find([])
+    punto_de_venta = Pos()
+    punto_de_venta.pos_type = 'electronic'
+    punto_de_venta.number = 2
+    punto_de_venta.pyafipws_electronic_invoice_service = 'wsfe'
+    punto_de_venta.save()
+
+
+    facturas = {
+        '1': '01-Factura A',
+        '6': '06-Factura B',
+        '11': '11-Factura C'
+    }
+
+    for key, name in facturas.iteritems():
+        print u'\n>>> Creamos POS para '+name
+        pos_sequence = PosSequence()
+        pos_sequence.invoice_type = key
+        pos_sequence.invoice_sequence = _crear_seq(config, name, company)
+        pos_sequence.pos = punto_de_venta
+        pos_sequence.save()
+
+def _crear_seq(config, name, company):
+    """ Crear Sequence para POS """
+
+    Sequence = Model.get('ir.sequence')
+    seq_factura = Sequence(name=name+' Electronico', code='account.invoice',
+        company=company)
+    seq_factura.save()
+    return seq_factura
 
 if __name__ == '__main__':
     parser = OptionParser()

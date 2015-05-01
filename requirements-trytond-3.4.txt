@@ -39,7 +39,7 @@ trytond-stock==3.4.1
 trytonar-account-invoice-ar==3.4.1
 trytonar-account-coop-ar==3.4.0
 trytonar-account-voucher-ar==3.4.0
-trytonar-account-check-ar==3.4.0
+trytonar-account-check-ar==3.4.1
 trytonar-account-retencion-ar==3.4.0
 trytonar-account-bank-ar==3.4.0
 vatnumber==1.2
