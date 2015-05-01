@@ -67,6 +67,10 @@ def install_modules():
     Module = Model.get('ir.module.module')
     modules_to_install=[
         'account_ar',
+        'account_voucher_ar',
+        'account_check_ar',
+        'account_bank_ar',
+        'account_retencion_ar',
         'account_coop_ar',
         'company_logo',
         'account_invoice_ar',
