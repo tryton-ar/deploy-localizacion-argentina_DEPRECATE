@@ -58,6 +58,7 @@ def main(options):
         pass
 
     install_modules()
+    crear_company(config, es_AR)
     crear_scenario_tipo(config, es_AR)
     crear_account_invoice_ar_pos(config, es_AR)
     print "done."
@@ -88,14 +89,11 @@ def install_modules():
         item.state = 'done'
         item.save()
 
-def crear_scenario_tipo(config, lang):
-    """ Crear el scenario base """
+def crear_company(config, lang):
+    """ Crear company. Traer datos de AFIP"""
     Currency = Model.get('currency.currency')
     Company = Model.get('company.company')
     Party = Model.get('party.party')
-    User = Model.get('res.user')
-    #Group = Model.get('res.group')
-
 
     # crear company
     # obtener nombre de la compania de un archivo.
@@ -109,24 +107,63 @@ def crear_scenario_tipo(config, lang):
     company_config = Wizard('company.company.config')
     company_config.execute('company')
     company = company_config.form
-    party = Party(name=ini_config.get('company','name'))
+    party = Party(name='NOMBRE COMPANY')
     party.lang = lang
-
     party.vat_country = 'AR'
     party.vat_number = ini_config.get('company', 'cuit')
     party.iva_condition = ini_config.get('company', 'iva_condition')
-    party.addresses.street = ini_config.get('company', 'direccion')
-    party.addresses.zip = ini_config.get('company', 'codigo_postal')
-    party.addresses.country = '191'
-    party.addresses.city = ini_config.get('company', 'ciudad')
+
+    try:
+        from urllib2 import urlopen
+        from json import loads, dumps
+        afip_url    = 'https://soa.afip.gob.ar/sr-padron/v2/persona/%s' % party.vat_number
+        afip_stream = urlopen(afip_url)
+        afip_json   = afip_stream.read()
+        afip_dict   = loads(afip_json)
+        print "   >>> got json:\n" + dumps(afip_dict)
+        afip_dict = afip_dict['data']
+    except Exception:
+        print u'\n NO se ha encontrado el cuit'
+        return
+
+    activ  = afip_dict['actividades']
+    activ1 = str(activ[0]) if len(activ) >= 1 else ''
+    activ2 = str(activ[1]) if len(activ) >= 2 else ''
+
+    import datetime
+    # formato de fecha: AAAA-MM-DD
+    fecha = afip_dict['fechaInscripcion'].split('-')
+    if len(fecha) == 3 and len(fecha) == 3:
+        year = int(fecha[0])
+        month = int(fecha[1])
+        day = int(fecha[2])
+
+    party.name = afip_dict['nombre']
+    party.primary_activity_code = activ1
+    party.secondary_activity_code = activ2
+    party.vat_country = 'AR'
+    party.start_activity_date = datetime.date(year, month, day)
+    if afip_dict['estadoClave'] == 'ACTIVO':
+        party.active = True
+    else:
+        party.active = False
+
     party.save()
 
+    # Direccion
+    Address = Model.get('party.address')
+    direccion = Address.find(['party', '=', party.id])[0]
+    _update_direccion(direccion, party, afip_dict)
+    party.save()
+
+
+    print u'\n>>> voy finalizando creacion de la company...'
+    print u'\n>>> obtengo el logo de la company...'
     company.party = party
     company.currency = currency
     company_config.execute('add')
     company, = Company.find([])
 
-    print u'\n>>> obtengo el logo de la company...'
     try:
         file_p = open('logo.jpg', 'rb')
         logo = buffer(file_p.read())
@@ -135,6 +172,21 @@ def crear_scenario_tipo(config, lang):
         company.save()
     except IOError:
         print u'\n>>> no encontre el archivo logo.jpg ...'
+
+def _update_direccion(direccion, party, afip_dict):
+    "Actualizamos direccion de una party"
+    direccion.name = afip_dict['nombre']
+    direccion.street = afip_dict['domicilioFiscal']['direccion']
+    direccion.zip = afip_dict['domicilioFiscal']['codPostal']
+    direccion.party = party
+    direccion.save()
+
+
+def crear_scenario_tipo(config, lang):
+    """ Crear el scenario base """
+    Company = Model.get('company.company')
+    User = Model.get('res.user')
+    company, = Company.find([])
 
     # reload the context
     print u'\n>>> creando admin...'
