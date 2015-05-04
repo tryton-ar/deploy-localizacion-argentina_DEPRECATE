@@ -11,10 +11,15 @@ Al script `deploy.sh` se le deben pasar ciertos parámetros.
 Ejemplo de ejecución::
 
 ```
-./deploy.sh -t 3.4 -i /opt/tryton-localizacion-ar -c /etc/trytond.conf
+./deploy.sh -t 3.4 -c /etc/trytond.conf --database-host localhost
 ```
 
-Utilizará el tag 3.4, se instalará en el directorio /opt/tryton-localizacion-ar y utilizará la configuración de /etc/trytond.conf
+Explico los argumentos:
+
+ * -t: Le estamos indicando que vamos a instalar la versión 3.4 de Tryton.
+ * -c: Le indicamos el path adonde encontrar el archivo de configuración (que se debe crear previamente / leer sección Configuración)
+ * --database-host: Le indicamos el host donde esta instalado el servidor postgresql
+
 
 Variable que usa el script y se pueden reacomodar.
 ```
@@ -57,7 +62,7 @@ Para la versión 3.4 estamos instalando de la siguiente manera:
 Configuración:
 --------------
 
-Creamos el usuario en el posgreSLQ
+Creamos el usuario en el postgreSLQ
 
  * configurar el usuario en postgresql::
 
@@ -70,7 +75,10 @@ Creamos el usuario en el posgreSLQ
 
  * modificar la configuración del servidor ``trytond`` en ``/etc/trytond.conf``:
 
-Ejemplo de trytond.conf:
+trytond.conf
+____________
+
+Archivo de configuración del servidor trytond. Aquí copiamos un ejemplo que contiene lo mínimo necesario.
 
 ```
 [jsonrpc]
@@ -91,6 +99,17 @@ super_pwd=hrNNibAnqs1ng
 ```
     python -c 'import getpass,crypt,random,string; print crypt.crypt(getpass.getpass(), \
                "".join(random.sample(string.ascii_letters + string.digits, 8)))'
+```
+
+company.ini
+___________
+
+El archivo company.ini debe contener los datos de la Company que se creará al ejecutar el instalador deploy.sh
+
+```
+[company]
+cuit: 30710158254
+iva_condition: responsable_inscripto
 ```
 
 Ejecutar el servidor

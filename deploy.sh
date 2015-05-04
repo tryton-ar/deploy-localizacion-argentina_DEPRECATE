@@ -61,12 +61,12 @@ DATABASE_NAME=${DATABASE}_${VERSION}
 DATABASE_NAME=${DATABASE_NAME//./_}
 DATABASE_NAME=${DATABASE_NAME////_}
 
-source `which virtualenvwrapper.sh`
-
 if [ ! -e "$TRYTON_CONFIG_FILE" ]; then
     echo "El archivo de configuracion de trytond no existe $TRYTON_CONFIG_FILE" >&2
     exit 1
 fi
+
+source `which virtualenvwrapper.sh`
 
 echo "---------------------------------------------------------"
 echo "Borramos virtualenv anteriormente creado"
@@ -88,31 +88,19 @@ echo "Comenzamos instalacion de paquetes pip"
 echo "---------------------------------------------------------"
 pip install -r requirements-trytond-$VERSION.txt
 
-cdsitepackages
-cd ../../../src
-MODULES_EXTRA=`pwd`
-
 echo "---------------------------------------------------------"
 echo "Instalar pyafipws"
 echo "---------------------------------------------------------"
 
+cdsitepackages
 wget https://github.com/reingart/pyafipws/archive/2.7.tar.gz 
 tar zxvf 2.7.tar.gz
 rm 2.7.tar.gz
 
 echo "---------------------------------------------------------"
-echo "Instalamos modulos locales en el virtualen"
+echo "Movemos pyafipws-2.7 a pyafipws"
 echo "---------------------------------------------------------"
-
-cdsitepackages
-SITEPACKAGES=`pwd`
-cd trytond/modules
-MODULES_TRYTON=`pwd`
-
-echo "---------------------------------------------------------"
-echo "Creamos symbolic links de los modulos extras"
-echo "---------------------------------------------------------"
-ln -v -s $MODULES_EXTRA/pyafipws-2.7 $SITEPACKAGES/pyafipws
+mv -v pyafipws-2.7 pyafipws
 
 echo "---------------------------------------------------------"
 echo "Ejecutamos scripts de instalacion de scenario base"

@@ -110,8 +110,12 @@ def crear_company(config, lang):
     party = Party(name='NOMBRE COMPANY')
     party.lang = lang
     party.vat_country = 'AR'
-    party.vat_number = ini_config.get('company', 'cuit')
-    party.iva_condition = ini_config.get('company', 'iva_condition')
+    try:
+        party.vat_number = ini_config.get('company', 'cuit')
+        party.iva_condition = ini_config.get('company', 'iva_condition')
+    except Exception,e:
+        print 'Error: No se ha configurado correctamente company.ini\n'
+        raise SystemExit(repr(e))
 
     try:
         from urllib2 import urlopen
@@ -121,10 +125,11 @@ def crear_company(config, lang):
         afip_json   = afip_stream.read()
         afip_dict   = loads(afip_json)
         print "   >>> got json:\n" + dumps(afip_dict)
+        if afip_dict['success'] == False:
+            raise Exception('error', afip_dict['error']['mensaje'])
         afip_dict = afip_dict['data']
-    except Exception:
-        print u'\n NO se ha encontrado el cuit'
-        return
+    except Exception,e:
+        raise SystemExit(repr(e))
 
     activ  = afip_dict['actividades']
     activ1 = str(activ[0]) if len(activ) >= 1 else ''
