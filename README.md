@@ -47,10 +47,10 @@ Para la versión 3.4 estamos instalando de la siguiente manera:
            make git mercurial
 ```
 
-   * si queremos generar pdfs, es necesario instalar dos paquetes más::
+   * si queremos generar pdfs, es necesario instalar unoconv::
 
 ```
-    apt-get install libreoffice-java-common python-uno
+    apt-get install unoconv
 ```
 
  * instalar el virtualenvwrapper::
