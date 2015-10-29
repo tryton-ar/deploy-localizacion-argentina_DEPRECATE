@@ -2,7 +2,7 @@ ConfigParser
 Genshi==0.7
 M2Crypto==0.22.3
 Pillow==2.8.1
-PySimpleSOAP==1.16
+PySimpleSOAP==1.08.8
 argparse==1.2.1
 httplib2==0.9.1
 lxml==3.4.3
