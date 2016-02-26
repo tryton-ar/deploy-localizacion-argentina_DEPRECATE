@@ -121,7 +121,7 @@ def crear_company(config, lang):
     try:
         from urllib2 import urlopen
         from json import loads, dumps
-        context = ssl._create_unverified_context()
+        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
         afip_url    = 'https://soa.afip.gob.ar/sr-padron/v2/persona/%s' % party.vat_number
         afip_stream = urlopen(afip_url, context=context)
         afip_json   = afip_stream.read()
