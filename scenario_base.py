@@ -12,6 +12,7 @@ from proteus import Model, Wizard
 from proteus import config as pconfig
 from dateutil.relativedelta import relativedelta
 import ssl
+import sys
 today = datetime.date.today()
 
 
@@ -121,9 +122,12 @@ def crear_company(config, lang):
     try:
         from urllib2 import urlopen
         from json import loads, dumps
-        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
         afip_url    = 'https://soa.afip.gob.ar/sr-padron/v2/persona/%s' % party.vat_number
-        afip_stream = urlopen(afip_url, context=context)
+        if sys.version_info >= (2, 7, 9):
+            context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+            afip_stream = urlopen(afip_url, context=context)
+        else:
+            afip_stream = urlopen(afip_url)
         afip_json   = afip_stream.read()
         afip_dict   = loads(afip_json)
         print "   >>> got json:\n" + dumps(afip_dict)
